@@ -165,3 +165,4 @@ struct UserPreferences: Codable {
         self.soundEnabled = true
     }
 }
+

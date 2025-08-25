@@ -127,3 +127,4 @@ struct OnboardingView: View {
         .environmentObject(OnboardingViewModel())
         .environmentObject(UserDataService())
 }
+

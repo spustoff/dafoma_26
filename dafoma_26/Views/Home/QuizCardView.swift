@@ -66,8 +66,9 @@ struct QuizCardView: View {
                 RoundedRectangle(cornerRadius: 16)
                     .stroke(Color.categoryColor(for: quiz.category).opacity(0.2), lineWidth: 1)
             )
+            .contentShape(Rectangle()) // Ensure entire area is tappable
         }
-        .buttonStyle(ScaleButtonStyle())
+        .buttonStyle(ResponsiveButtonStyle())
     }
 }
 
@@ -141,8 +142,9 @@ struct FeaturedQuizCard: View {
             .background(Color.backgroundPrimary)
             .cornerRadius(16)
             .shadow(color: Color.black.opacity(0.1), radius: 12, x: 0, y: 6)
+            .contentShape(Rectangle()) // Ensure entire area is tappable
         }
-        .buttonStyle(ScaleButtonStyle())
+        .buttonStyle(ResponsiveButtonStyle())
     }
 }
 
@@ -253,11 +255,13 @@ struct CategoryOverviewCard: View {
                 }
             }
             .frame(maxWidth: .infinity)
+            .frame(minHeight: 120) // Ensure minimum touch target size
             .padding(.vertical, 20)
             .background(Color.backgroundSecondary)
             .cornerRadius(16)
+            .contentShape(Rectangle()) // Ensure entire area is tappable
         }
-        .buttonStyle(ScaleButtonStyle())
+        .buttonStyle(ResponsiveButtonStyle())
     }
 }
 
@@ -328,6 +332,8 @@ struct ScaleButtonStyle: ButtonStyle {
     }
 }
 
+
+
 // Additional Views for other tabs (placeholders for now)
 struct CategoriesView: View {
     @EnvironmentObject private var contentViewModel: ContentViewModel
@@ -354,6 +360,12 @@ struct CategorySection: View {
     let category: QuizCategory
     let quizzes: [Quiz]
     @State private var selectedQuiz: Quiz?
+    
+    private var adaptiveColumns: [GridItem] {
+        let screenWidth = UIScreen.main.bounds.width
+        let columnCount = screenWidth > 768 ? 3 : 2 // 3 columns on iPad, 2 on iPhone
+        return Array(repeating: GridItem(.flexible(), spacing: 16), count: columnCount)
+    }
     
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
@@ -383,7 +395,7 @@ struct CategorySection: View {
                     .foregroundColor(.textTertiary)
                     .padding(.vertical, 20)
             } else {
-                LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 16), count: 2), spacing: 16) {
+                LazyVGrid(columns: adaptiveColumns, spacing: 16) {
                     ForEach(quizzes) { quiz in
                         QuizCardView(quiz: quiz) {
                             selectedQuiz = quiz
@@ -394,6 +406,7 @@ struct CategorySection: View {
         }
         .sheet(item: $selectedQuiz) { quiz in
             QuizDetailView(quiz: quiz)
+                .environmentObject(UserDataService())
         }
     }
 }
@@ -434,7 +447,7 @@ struct UserProgressView: View {
                             .font(.system(size: 20, weight: .bold))
                             .foregroundColor(.textPrimary)
                         
-                        LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 12), count: 2), spacing: 12) {
+                        LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 12), count: UIScreen.main.bounds.width > 768 ? 3 : 2), spacing: 12) {
                             ForEach(userDataService.getAchievements()) { achievement in
                                 AchievementCard(achievement: achievement)
                             }

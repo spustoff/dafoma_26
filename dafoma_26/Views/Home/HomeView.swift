@@ -18,7 +18,7 @@ struct HomeView: View {
         TabView(selection: $selectedTab) {
             // Home Tab
             NavigationView {
-                HomeContentView()
+                HomeContentView(selectedTab: $selectedTab)
                     .environmentObject(contentViewModel)
                     .environmentObject(userDataService)
             }
@@ -70,6 +70,7 @@ struct HomeContentView: View {
     @EnvironmentObject private var contentViewModel: ContentViewModel
     @EnvironmentObject private var userDataService: UserDataService
     @State private var selectedQuiz: Quiz?
+    @Binding var selectedTab: Int
     
     var body: some View {
         ScrollView {
@@ -99,7 +100,9 @@ struct HomeContentView: View {
                 CategoriesOverviewSection(
                     categories: contentViewModel.getCategoriesWithQuizCount(),
                     onCategorySelected: { category in
-                        // Navigate to category view
+                        // Navigate to Categories tab and filter by category
+                        selectedTab = 1
+                        contentViewModel.selectedCategory = category
                     }
                 )
                 
@@ -251,12 +254,18 @@ struct RecommendedQuizzesSection: View {
     let quizzes: [Quiz]
     let onQuizSelected: (Quiz) -> Void
     
+    private var adaptiveColumns: [GridItem] {
+        let screenWidth = UIScreen.main.bounds.width
+        let columnCount = screenWidth > 768 ? 3 : 2 // 3 columns on iPad, 2 on iPhone
+        return Array(repeating: GridItem(.flexible(), spacing: 16), count: columnCount)
+    }
+    
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
             SectionHeader(title: "Recommended for You", subtitle: "Based on your interests")
             
-            LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 16), count: 2), spacing: 16) {
-                ForEach(quizzes.prefix(4)) { quiz in
+            LazyVGrid(columns: adaptiveColumns, spacing: 16) {
+                ForEach(quizzes.prefix(6)) { quiz in // Show more quizzes on iPad
                     QuizCardView(quiz: quiz) {
                         onQuizSelected(quiz)
                     }
@@ -270,11 +279,17 @@ struct CategoriesOverviewSection: View {
     let categories: [(category: QuizCategory, count: Int)]
     let onCategorySelected: (QuizCategory) -> Void
     
+    private var adaptiveColumns: [GridItem] {
+        let screenWidth = UIScreen.main.bounds.width
+        let columnCount = screenWidth > 768 ? 3 : 2 // 3 columns on iPad, 2 on iPhone
+        return Array(repeating: GridItem(.flexible(), spacing: 12), count: columnCount)
+    }
+    
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
             SectionHeader(title: "Explore Categories", subtitle: "Find your perfect quiz")
             
-            LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 12), count: 2), spacing: 12) {
+            LazyVGrid(columns: adaptiveColumns, spacing: 12) {
                 ForEach(categories.prefix(6), id: \.category) { item in
                     CategoryOverviewCard(category: item.category, count: item.count) {
                         onCategorySelected(item.category)

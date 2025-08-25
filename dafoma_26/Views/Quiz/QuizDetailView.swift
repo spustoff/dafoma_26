@@ -598,7 +598,9 @@ struct AnswerOptionButton: View {
                     .stroke(borderColor, lineWidth: 2)
             )
             .cornerRadius(12)
+            .contentShape(Rectangle())
         }
+        .buttonStyle(ResponsiveButtonStyle())
         .disabled(showResult)
         .scaleEffect(isSelected && !showResult ? 1.02 : 1.0)
         .animation(.spring(response: 0.3, dampingFraction: 0.7), value: isSelected)

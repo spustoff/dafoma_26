@@ -212,7 +212,9 @@ struct CategorySelectionCard: View {
                             .stroke(Color.white.opacity(isSelected ? 0.6 : 0.3), lineWidth: isSelected ? 2 : 1)
                     )
             )
+            .contentShape(Rectangle())
         }
+        .buttonStyle(ResponsiveButtonStyle())
         .scaleEffect(isSelected ? 1.05 : 1.0)
         .animation(.spring(response: 0.3, dampingFraction: 0.7), value: isSelected)
     }
@@ -270,7 +272,9 @@ struct DifficultySelectionRow: View {
                             .stroke(Color.white.opacity(isSelected ? 0.4 : 0.2), lineWidth: 1)
                     )
             )
+            .contentShape(Rectangle())
         }
+        .buttonStyle(ResponsiveButtonStyle())
         .scaleEffect(isSelected ? 1.02 : 1.0)
         .animation(.spring(response: 0.3, dampingFraction: 0.7), value: isSelected)
     }
@@ -308,3 +312,4 @@ struct DifficultySelectionRow: View {
     OnboardingPreferencesPage()
         .environmentObject(OnboardingViewModel())
 }
+

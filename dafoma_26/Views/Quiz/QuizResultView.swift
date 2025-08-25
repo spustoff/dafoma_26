@@ -130,7 +130,9 @@ struct QuizResultView: View {
                             .background(Color.primaryGradient)
                             .cornerRadius(12)
                             .shadow(color: Color.primaryBlue.opacity(0.3), radius: 8, x: 0, y: 4)
+                            .contentShape(Rectangle())
                     }
+                    .buttonStyle(ResponsiveButtonStyle())
                     
                     Button(action: retakeAction) {
                         Text("Retake Quiz")
@@ -144,7 +146,9 @@ struct QuizResultView: View {
                                     .stroke(Color.primaryBlue, lineWidth: 2)
                             )
                             .cornerRadius(10)
+                            .contentShape(Rectangle())
                     }
+                    .buttonStyle(ResponsiveButtonStyle())
                 }
                 .padding(.horizontal, 20)
                 .padding(.bottom, 40)
@@ -544,3 +548,4 @@ struct ConfettiPiece: View {
         retakeAction: {}
     )
 }
+

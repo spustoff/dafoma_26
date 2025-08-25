@@ -24,6 +24,8 @@ extension View {
             .background(Color.primaryGradient)
             .cornerRadius(12)
             .shadow(color: Color.primaryBlue.opacity(0.3), radius: 8, x: 0, y: 4)
+            .contentShape(Rectangle())
+            .buttonStyle(ResponsiveButtonStyle())
     }
     
     func secondaryButtonStyle() -> some View {
@@ -37,6 +39,8 @@ extension View {
                     .stroke(Color.primaryBlue, lineWidth: 2)
             )
             .cornerRadius(12)
+            .contentShape(Rectangle())
+            .buttonStyle(ResponsiveButtonStyle())
     }
     
     func navigationBarStyle() -> some View {
@@ -186,4 +190,41 @@ extension Animation {
     static let springy = Animation.spring(response: 0.6, dampingFraction: 0.8)
     static let smooth = Animation.easeInOut(duration: 0.3)
     static let bouncy = Animation.spring(response: 0.4, dampingFraction: 0.6)
+}
+
+// MARK: - iPad Optimization Extensions
+extension View {
+    func iPadOptimized() -> some View {
+        self
+            .contentShape(Rectangle()) // Ensure entire area is tappable
+    }
+    
+    func adaptiveMinHeight() -> some View {
+        let minHeight: CGFloat = UIScreen.main.bounds.width > 768 ? 120 : 100
+        return self.frame(minHeight: minHeight)
+    }
+    
+    var isIPad: Bool {
+        UIDevice.current.userInterfaceIdiom == .pad
+    }
+}
+
+// MARK: - Button Styles
+struct iPadOptimizedButtonStyle: ButtonStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .scaleEffect(configuration.isPressed ? 0.98 : 1.0)
+            .opacity(configuration.isPressed ? 0.8 : 1.0)
+            .animation(.easeInOut(duration: 0.15), value: configuration.isPressed)
+    }
+}
+
+struct ResponsiveButtonStyle: ButtonStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .scaleEffect(configuration.isPressed ? 0.96 : 1.0)
+            .opacity(configuration.isPressed ? 0.9 : 1.0)
+            .animation(.easeInOut(duration: 0.1), value: configuration.isPressed)
+            .contentShape(Rectangle())
+    }
 }

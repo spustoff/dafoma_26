@@ -229,3 +229,4 @@ struct QuestionResult {
     let selectedAnswerIndex: Int?
     let isCorrect: Bool
 }
+
